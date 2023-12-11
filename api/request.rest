@@ -5,11 +5,11 @@ POST http://localhost:3001/todo/new
 Content-Type: application/json
 
 {
-     "text": "clean dishes"
+     "text": "take bath"
 }
 
 ###
-DELETE http://localhost:3001/todo/delete/65752583af12470d5ddd9dce
+DELETE http://localhost:3001/todo/delete/6576dfceb8185b92c79865d3
 
 ###
-PUT  http://localhost:3001/todo/complete/657526d0dfcdda35d346986a
+PUT  http://localhost:3001/todo/complete/6576b8ecce4b30d13f4ff3fb

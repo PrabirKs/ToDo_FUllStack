@@ -1,51 +1,116 @@
 import React from "react";
-import { useState,useEffect } from "react";
+import { useState, useEffect } from "react";
 
-const API_BASE = "http://localhost:3001" ;
+const API_BASE = "http://localhost:3001";
 
 function App() {
-  const [todos,setTodos] = useState([]) ;
-  const [popupActive, setPopupActive] = useState(false) ;
-  const [newTodo,setNewTodo] = useState("");
+  const [todos, setTodos] = useState([]);
+  const [popupActive, setPopupActive] = useState(false);
+  const [newTodo, setNewTodo] = useState("");
 
-  useEffect(()=>{
-    GetTodos() ;
-  },[])
+  useEffect(() => {
+    GetTodos();
+  }, []);
 
-  const GetTodos = () =>{
-    fetch("http://localhost:3001/todos")
-         .then(res => res.json())
-         .then(data => setTodos(data))
-         .catch(err => console.err("Error: " , err))
+  const GetTodos = () => {
+    fetch(API_BASE + "/todos")
+      .then((res) => res.json())
+      .then((data) => setTodos(data))
+      .catch((err) => console.error("Error: ", err));
+  };
+
+  const completeTodo = async (id) => {
+    const data = await fetch(API_BASE + "/todo/complete/" + id).then((res) =>
+      res.json()
+    );
+
+    setTodos((todos) =>
+      todos.map((todo) => {
+        if (todo._id === data._id) {
+          todo.complete = data.complete;
+        }
+        return todo;
+      })
+    );
+  };
+
+  const deleteTodo = async (id) => {
+    try {
+      await fetch(API_BASE + "/todo/delete/" + id, {
+        method: "DELETE",
+      });
+
+      setTodos((prevTodos) => prevTodos.filter((todo) => todo._id !== id));
+    } catch (error) {
+      console.error("Error deleting todo: ", error);
+    }
+  };
+
+  const addTodo = async () =>{
+    const data = await fetch(API_BASE + "/todo/new",{
+      method: "POST" ,
+      headers: {
+        'content-Type': "application/json"
+      },
+      body: JSON.stringify({
+        text: newTodo
+      })
+    }).then(res => res.json())
+    setTodos([...todos,data]) ;
+    setPopupActive(false) ;
+    setNewTodo("");
+
   }
   return (
     <div className="App">
-       <h1> WElcome, Prabir</h1>
-       <h4>Your Task</h4>
+      <h1> WElcome, Prabir</h1>
+      <h4>Your Task</h4>
 
-       <div className="todos">
-          <div className="todo">
-              <div className="checkbox"></div>
+      <div className="todos">
+        {todos.map((todo) => (
+          <div
+            className={"todo" + (todo.complete == true ? " is-complete" : " ")}
+            key={todo._id}
+          >
+            <div
+              className="checkbox"
+              onClick={() => completeTodo(todo._id)}
+            ></div>
 
-              <div className="text">Clean Your bed</div>
+            <div className="text" onClick={() => completeTodo(todo._id)}>
+              {todo.text}
+            </div>
 
-              <div className="delete-todo"></div>
+            <div className="delete-todo" onClick={() => deleteTodo(todo._id)}>
+              x
+            </div>
           </div>
-          <div className="todo">
-              <div className="checkbox"></div>
+        ))}
+      </div>
 
-              <div className="text">finish toilet and bath</div>
+      <div className="addPopUp" onClick={() => setPopupActive(true)}>
+        +
+      </div>
 
-              <div className="delete-todo"></div>
+      {popupActive ? (
+        <div className="popup">
+          <div className="closePopup" onClick={() => setPopupActive(false)}>
+            x
           </div>
-          <div className="todo is-complete">
-              <div className="checkbox"></div>
-
-              <div className="text">take your breakfast</div>
-
-              <div className="delete-todo"></div>
+          <div className="content">
+            <h3>Add Task</h3>
+            <input
+              type="text"
+              className="add-todo-input"
+              onChange={(e) => setNewTodo(e.target.value)}
+              value={newTodo}
+            />
+            <div className="button" onClick={addTodo}> Create Task</div>
           </div>
-       </div>
+        </div>
+      ) : (
+        ""
+      )}
     </div>
   );
 }
