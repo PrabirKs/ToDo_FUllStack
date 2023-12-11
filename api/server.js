@@ -17,6 +17,11 @@ mongoose
 
 const Todo = require("./models/Todo");
 
+// default checking for deploy
+app.get("/",(req,res) => {
+    res.json("hello prabir") ;
+})
+
 app.get("/todos", async (req, res) => {
   const todos = await Todo.find();
   res.json(todos);
