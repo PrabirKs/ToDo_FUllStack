@@ -1,7 +1,7 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
-
+const path = require("path")
 const app = express();
 
 app.use(express.json());
@@ -18,9 +18,9 @@ mongoose
 const Todo = require("./models/Todo");
 
 // default checking for deploy
-app.get("/",(req,res) => {
-    res.json("hello prabir") ;
-})
+// app.get("/",(req,res) => {
+//     res.json("hello prabir") ;
+// })
 
 app.get("/todos", async (req, res) => {
   const todos = await Todo.find();
@@ -56,6 +56,11 @@ app.get("/todo/complete/:id", async (req, res) => {
   todo.complete = !todo.complete;
   todo.save();
   res.json(todo);
+});
+
+app.get("/", (req, res) => {
+  app.use(express.static(path.resolve(__dirname, "client", "build")));
+  res.sendFile(path.resolve(__dirname, "client", "build", "index.html"));
 });
 
 app.listen(3001, () => console.log("server started on port 3001"));
