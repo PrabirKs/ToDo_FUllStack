@@ -2,7 +2,7 @@ import React from "react";
 import { useState, useEffect } from "react";
 
 const API_BASE = `${window.location.origin}`;
-const API_BASE_LOCAL = "http://localhost:3001"
+//const API_BASE_LOCAL = "http://localhost:3001"
 
 function App() {
   const [todos, setTodos] = useState([]);
@@ -70,7 +70,7 @@ function App() {
       <div className="todos">
         {todos.map((todo) => (
           <div
-            className={"todo" + (todo.complete == true ? " is-complete" : " ")}
+            className={"todo" + (todo.complete === true ? " is-complete" : " ")}
             key={todo._id}
           >
             <div
